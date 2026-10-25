@@ -1,0 +1,10 @@
+{
+  "version": "1.2.0",
+  "minVersion": "1.2.0",
+  "url": "https://github.com/Wavykid97/fastdl/releases/download/v1.2.0/FastDL-Setup-1.2.0.exe",
+  "sha256": "e68bc66ed007f62e857bd6817a9b6cb6bf80951c883eda672118db0c1d0b7741",
+  "size": 2411535,
+  "notes": "Automatic updates\nSmarter speed, download queue and speed limit\nChange link for expired downloads",
+  "published": "2026-10-25",
+  "signature": "ICIS3Egn5kTqrVOEB3kYOXirlH/mgyAoMFqD9abZQFdWPn049kSy1DQ2VEWvIJzLEw0hTgR767y02ZWbnbVhCQ=="
+}
