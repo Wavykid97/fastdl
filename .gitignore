@@ -1,0 +1,9 @@
+# build output
+/release/
+/build/Laneway.exe
+/build/Laneway-Setup-*.exe
+/fastdl
+/Laneway
+/dist/
+# never commit signing keys
+*.key

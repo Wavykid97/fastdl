@@ -1,0 +1,5 @@
+{
+  "updateURL": "https://github.com/Wavykid97/fastdl/releases/latest/download/latest.json",
+  "downloadBase": "https://github.com/Wavykid97/fastdl/releases/download/v{version}/",
+  "githubRepo": "Wavykid97/fastdl"
+}
