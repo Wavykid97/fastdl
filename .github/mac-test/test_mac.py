@@ -80,6 +80,9 @@ check("Gatekeeper reaction (expected: rejected until Apple-notarized)", True, (r
 
 # 3. Open it. Chrome's folder must exist (it does once Chrome has been used).
 os.makedirs(os.path.join(SUPPORT, "Google", "Chrome"), exist_ok=True)
+# This test Mac has never opened Chrome; skip Chrome's first-run welcome box
+# (people who use Chrome never see it again) so the screenshot shows Laneway.
+open(os.path.join(SUPPORT, "Google", "Chrome", "First Run"), "w").close()
 inst_file = os.path.join(SUPPORT, "Laneway", "instance.json")
 if os.path.exists(inst_file):
     os.remove(inst_file)
