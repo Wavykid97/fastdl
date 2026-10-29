@@ -1,0 +1,63 @@
+# Tests Laneway's Mac release on real Macs (an Apple-silicon one and an
+# Intel one), using GitHub's free Mac computers for public repositories.
+#
+# Runs by itself when you publish a release, or by hand:
+# Actions tab -> "Mac test" -> "Run workflow".
+# Results show on the run's page; screenshots are under "Artifacts".
+name: Mac test
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to test, e.g. 2.0.3 (leave empty for the latest release)"
+        required: false
+
+permissions:
+  contents: write # lets it test a release that's still a draft
+
+jobs:
+  mac:
+    name: ${{ matrix.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: "Apple-silicon Mac", os: macos-15 }
+          - { name: "Intel Mac", os: macos-15-intel }
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          V: ${{ inputs.version || github.event.release.tag_name }}
+        run: |
+          mkdir rel && cd rel
+          TAG=""
+          if [ -n "$V" ]; then TAG="v${V#v}"; fi
+          gh release download $TAG -R "${{ github.repository }}" -p 'Laneway-*.dmg' -p 'latest-mac.json'
+          ls -la
+
+      - name: Test the app
+        run: python3 .github/mac-test/test_mac.py rel/Laneway-*.dmg rel/latest-mac.json out
+
+      - name: Test the browser extension
+        if: always()
+        working-directory: .github/mac-test
+        run: |
+          npm init -y > /dev/null
+          npm install --silent playwright@1.49.1
+          npx playwright install chromium
+          node test_ext.mjs "$GITHUB_WORKSPACE/out"
+
+      - name: Keep the screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-${{ matrix.os }}
+          path: out/
