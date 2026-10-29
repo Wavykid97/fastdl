@@ -138,7 +138,10 @@ except Exception as e:
 
 # 6. A real download from GitHub, over several connections, checked byte for byte.
 if inst:
-    url = rel["url"]
+    # A public file from the newest published release (the one being tested
+    # may still be a draft, whose files aren't public yet).
+    url = "https://github.com/Wavykid97/fastdl/releases/latest/download/Laneway.dmg"
+    expected = hashlib.sha256(urllib.request.urlopen(url, timeout=120).read()).hexdigest()
     try:
         api("add", {"url": url, "conns": 4})
         def finished():
@@ -150,7 +153,7 @@ if inst:
         check("Downloads a real file", ok, j and (j.get("error") or f"{j['size']} bytes in {j.get('time', 0):.1f} s with {j.get('conns')} connections"))
         if ok:
             h = hashlib.sha256(open(j["out"], "rb").read()).hexdigest()
-            check("…and the file is exactly right (SHA-256 matches)", h == rel["sha256"], h[:16] + "…")
+            check("…and the file is exactly right (SHA-256 matches)", h == expected, h[:16] + "…")
         shot("3-after-download")
     except Exception as e:
         check("Downloads a real file", False, e)
