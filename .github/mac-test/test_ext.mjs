@@ -76,5 +76,5 @@ try {
 
 const lines = ["", "### Browser extension", "", "| | Check | Details |", "|---|---|---|",
   ...results.map(([n, ok, d]) => `| ${ok ? "✅" : "❌"} | ${n} | ${d.replace(/\|/g, "/").slice(0, 160)} |`)];
-fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY || path.join(OUT, "summary.md"), lines.join("\n") + "\n");
+for (const target of new Set([process.env.GITHUB_STEP_SUMMARY, path.join(OUT, "summary.md")].filter(Boolean))) fs.appendFileSync(target, lines.join("\n") + "\n");
 process.exit(results.every(r => r[1]) ? 0 : 1);

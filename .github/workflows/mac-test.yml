@@ -61,3 +61,12 @@ jobs:
         with:
           name: screenshots-${{ matrix.os }}
           path: out/
+
+      - name: Save the results to a branch
+        if: always()
+        run: |
+          B="mac-results/${GITHUB_RUN_ID}-${{ matrix.os }}"
+          cd out
+          git init -q -b results && git add -A
+          git -c user.name="Mac test" -c user.email="actions@github.com" commit -q -m "Mac test results"
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" "results:refs/heads/$B"
