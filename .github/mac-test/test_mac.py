@@ -170,6 +170,7 @@ lines = [f"## Laneway {rel['version']} on {mac}", "", "| | Check | Details |", "
 for name, ok, detail in results:
     lines.append(f"| {'✅' if ok else '❌'} | {name} | {detail.replace('|', '/')[:160]} |")
 lines += ["", "Screenshots are attached to this run (Artifacts, at the bottom of the run's page)."]
-with open(os.environ.get("GITHUB_STEP_SUMMARY", os.path.join(OUT, "summary.md")), "a") as f:
-    f.write("\n".join(lines) + "\n")
+for target in {os.environ.get("GITHUB_STEP_SUMMARY", ""), os.path.join(OUT, "summary.md")} - {""}:
+    with open(target, "a") as f:
+        f.write("\n".join(lines) + "\n")
 sys.exit(0 if all(ok for _, ok, _ in results) else 1)
