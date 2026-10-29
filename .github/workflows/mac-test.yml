@@ -32,6 +32,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Remove results of earlier runs
+        if: matrix.os == 'macos-15'
+        run: |
+          for b in $(git ls-remote origin 'refs/heads/mac-results/*' | awk '{print $2}' | sed 's#refs/heads/##' | grep -v "/${GITHUB_RUN_ID}-" || true); do
+            git push -q origin --delete "$b" || true
+          done
+
       - name: Download the release
         env:
           GH_TOKEN: ${{ github.token }}
