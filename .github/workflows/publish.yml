@@ -1,0 +1,46 @@
+# Attaches finished release files to a GitHub release.
+#
+# Laneway's releases are built and signed on the developer's computer. To
+# publish one, the files are pushed to a temporary branch called
+# publish/<anything> with a publish.json describing the release; this
+# workflow attaches them and then deletes the branch again.
+#
+# publish.json: {"tag": "v2.0.3", "title": "Laneway 2.0.3", "notes": "...",
+#                "draft": false}
+name: Publish release files
+
+on:
+  push:
+    branches: ["publish/**"]
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+
+      - name: Attach the files to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          TAG=$(jq -r .tag publish.json)
+          ls -la files
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            gh release upload "$TAG" files/* --clobber
+          else
+            jq -r .notes publish.json > notes.md
+            DRAFT=""
+            if [ "$(jq -r '.draft // false' publish.json)" = "true" ]; then DRAFT="--draft"; fi
+            gh release create "$TAG" files/* --title "$(jq -r .title publish.json)" --notes-file notes.md --target main $DRAFT
+          fi
+          gh release view "$TAG" --json assets --jq '.assets[].name'
+
+      - name: Remove the temporary branch
+        if: always()
+        run: git push origin --delete "$GITHUB_REF_NAME"
