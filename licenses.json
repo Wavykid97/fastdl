@@ -1,10 +1,10 @@
 {
-  "about": "Laneway Pro codes, by number only (never the codes themselves). Change a batch's status from \"active\" to \"off\" to switch those codes off; to switch off single codes, add their numbers to switched_off, like [5, 12]. Laneway checks this file every few hours. It can only switch codes off: new codes need the private license key.",
+  "about": "Laneway Pro codes, by number only (never the codes themselves). Change a batch's status from \"active\" to \"off\" to switch those codes off; to switch off single codes, add their numbers to switched_off, like [5, 12]. Laneway checks this file every 10 minutes. It can only switch codes off: new codes need the private license key.",
   "batches": [
     {
       "name": "Test",
       "codes": "1",
-      "status": "off"
+      "status": "active"
     },
     {
       "name": "Batch 1",
